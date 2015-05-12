@@ -1,0 +1,1 @@
+<?phpfunction getConnection(){$servername = "localhost";$username = "root";$password = "";$dbname = "slim";return new mysqli($servername, $username, $password, $dbname);}?>
