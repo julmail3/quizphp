@@ -35,8 +35,26 @@ $view->setTemplatesDirectory('./templates');
  */
  
 $app->get('/formUser', function () use ($app) {
-    $app->render('formUser.php'); // <-- SUCCESS
+    $app->render('formUser.php'); 
 });
+
+$app->get('/listUsers', function () use ($app) {
+	$conn = getConnection();
+	$sql = "SELECT * FROM users ORDER BY name ";
+	$result = $conn->query($sql);
+	$data = array();
+	if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+			$a=array("name"=>$row['name'],"email"=>$row["email"]);
+			array_push($data,$a);
+		}
+	} else {
+		echo "0 results";
+	}
+	$app->render('listUsers.php', $data);
+    //$app->render('listUsers.php'); 
+});
+
 
 $app->post('/addUser', function () use ($app) {
     $name = $app->request->post('name');
