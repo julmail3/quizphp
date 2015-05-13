@@ -38,6 +38,19 @@ $app->get('/formUser', function () use ($app) {
     $app->render('formUser.php'); 
 });
 
+$app->get('/formQuiz', function () use ($app) {
+	$conn = getConnection();
+	$sql = "SELECT * FROM subject ORDER BY description ";
+	$result = $conn->query($sql);
+	$data = array();
+	if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+	}
+    $app->render('formQuiz.php',$data); 
+});
+
 $app->get('/listUsers', function () use ($app) {
 	$conn = getConnection();
 	$sql = "SELECT * FROM users ORDER BY name ";
@@ -45,13 +58,48 @@ $app->get('/listUsers', function () use ($app) {
 	$data = array();
 	if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
-			$a=array("name"=>$row['name'],"email"=>$row["email"]);
-			array_push($data,$a);
+			/*$a=array("name"=>$row['name'],"email"=>$row["email"]);
+			array_push($data,$a);*/
+			$data[] = $row;
 		}
 	} else {
 		echo "0 results";
 	}
-	$app->render('listUsers.php', $data);
+	print json_encode($data);
+	//$app->render('listUsers.php', $data);
+    //$app->render('listUsers.php'); 
+});
+
+$app->post('/addSubject', function () use ($app) {
+	$newSubject = $app->request->post('newSubject');
+	$conn = getConnection();
+	$sql = "INSERT INTO subject (description) VALUES('$newSubject')";
+	if ($conn->query($sql) === TRUE) {
+		echo "<h5>New record created successfully</h5>";
+	} else {
+		echo "Error: " . $sql . "<br>" . $conn->error;
+	}
+	$conn->close();
+	$app->redirect('listSubjects');
+});
+
+$app->get('/listSubjects', function () use ($app) {
+	$conn = getConnection();
+	$sql = "SELECT * FROM subject ORDER BY description";
+	$result = $conn->query($sql);
+	$data = array();
+	if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+			/*$a=array("name"=>$row['name'],"email"=>$row["email"]);
+			array_push($data,$a);*/
+			$data[] = $row;
+		}
+	} else {
+		echo "0 results";
+	}
+	print json_encode($data);
+	//print_r($data);
+	//$app->render('listUsers.php', $data);
     //$app->render('listUsers.php'); 
 });
 
@@ -70,13 +118,22 @@ $app->post('/addUser', function () use ($app) {
 		echo "Error: " . $sql . "<br>" . $conn->error;
 	}
 	$conn->close();
-	$app->redirect('formUser');
+	$app->redirect('home');
 });
 
  
- $app->get('/hello/:name', function ($name) {
+$app->get('/hello/:name', function ($name) {
     echo "Hello, $name";
 });
+
+$app->get('/home', function () {
+    echo "Home";
+});
+
+$app->get('/', function () use ($app){
+    $app->redirect('home');
+});
+
 
 // GET route
 $app->get(
