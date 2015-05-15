@@ -52,20 +52,21 @@ $app->get('/formQuiz', function () use ($app) {
 });
 
 $app->get('/listUsers', function () use ($app) {
-	$conn = getConnection();
+	
+	/*$conn = getConnection();
 	$sql = "SELECT * FROM users ORDER BY name ";
 	$result = $conn->query($sql);
 	$data = array();
 	if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
-			/*$a=array("name"=>$row['name'],"email"=>$row["email"]);
-			array_push($data,$a);*/
+			
 			$data[] = $row;
 		}
 	} else {
 		echo "0 results";
 	}
-	print json_encode($data);
+	print json_encode($data);*/
+	
 	//$app->render('listUsers.php', $data);
     //$app->render('listUsers.php'); 
 });
@@ -84,20 +85,21 @@ $app->post('/addSubject', function () use ($app) {
 });
 
 $app->get('/listSubjects', function () use ($app) {
-	$conn = getConnection();
+	$data=getSubjects();
+	print json_encode($data);
+	/*$conn = getConnection();
 	$sql = "SELECT * FROM subject ORDER BY description";
 	$result = $conn->query($sql);
 	$data = array();
 	if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
-			/*$a=array("name"=>$row['name'],"email"=>$row["email"]);
-			array_push($data,$a);*/
+			
 			$data[] = $row;
 		}
 	} else {
 		echo "0 results";
 	}
-	print json_encode($data);
+	print json_encode($data);*/
 	//print_r($data);
 	//$app->render('listUsers.php', $data);
     //$app->render('listUsers.php'); 
@@ -265,11 +267,55 @@ $app->delete(
     }
 );
 
-/**
- * Step 4: Run the Slim application
- *
- * This method should be called last. This executes the Slim application
- * and returns the HTTP response to the HTTP client.
- */
+//-------------------------------------------------------------------
+ class ResourceNotFoundException extends Exception {}
+ 
+ $app->get('/users', function () use ($app) {  
+   $data = getUsers(); 
+   $app->response()->header('Content-Type', 'application/json');
+   echo json_encode($data);
+});
+ 
+$app->get('/users/:id', function ($id) use ($app) {    
+  try {
+    $data = getUser($id);
+	if ($data!=null) {
+      $app->response()->header('Content-Type', 'application/json');
+      echo json_encode($data);
+    } else {      
+      throw new ResourceNotFoundException();
+    }
+  }catch (ResourceNotFoundException $e) {
+    $app->response()->status(404);
+  }catch (Exception $e) {
+    $app->response()->status(400);
+    $app->response()->header('X-Status-Reason', $e->getMessage());
+  }
+});
+
+$app->get('/subjects', function () use ($app) {  
+   $data = getSubjects(); 
+   $app->response()->header('Content-Type', 'application/json');
+   echo json_encode($data);
+});
+
+$app->post('/user', function () use ($app) {    
+  try {
+    $request = $app->request();
+    $body = $request->getBody();
+    $input = json_decode($body); 
+       
+    $username = (string)$input->name;
+    $email = (string)$input->email;
+    $password = (string)$input->password;
+	addUser($username,$email,$password);
+    //$app->response()->header('Content-Type', 'application/json');
+    $app->redirect("users");
+  } catch (Exception $e) {
+    $app->response()->status(400);
+    $app->response()->header('X-Status-Reason', $e->getMessage());
+  }
+});
+
 $app->run();
 ?>
