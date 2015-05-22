@@ -35,8 +35,9 @@ $view->setTemplatesDirectory('./templates');
  */
  
 $app->get('/formUser', function () use ($app) {
-    $app->render('formUser.php'); 
+    $app->render('teste_angular_post.html'); 
 });
+
 
 $app->get('/formQuiz', function () use ($app) {
 	$conn = getConnection();
@@ -273,7 +274,13 @@ $app->delete(
  $app->get('/users', function () use ($app) {  
    $data = getUsers(); 
    $app->response()->header('Content-Type', 'application/json');
-   echo json_encode($data);
+   //print_r($data);
+   $strJson = "[";
+   foreach($data as $user)
+	  $strJson .= json_encode($user).",";
+   $strJson = substr($strJson,0,strlen($strJson)-1);
+   $strJson .= "]";
+   echo $strJson;
 });
  
 $app->get('/users/:id', function ($id) use ($app) {    
