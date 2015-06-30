@@ -39,7 +39,7 @@ $app->get('/formUser', function () use ($app) {
 });
 
 
-$app->get('/formQuiz', function () use ($app) {
+/* $app->get('/formQuiz', function () use ($app) {
 	$conn = getConnection();
 	$sql = "SELECT * FROM subject ORDER BY description ";
 	$result = $conn->query($sql);
@@ -50,7 +50,7 @@ $app->get('/formQuiz', function () use ($app) {
 		}
 	}
     $app->render('formQuiz.php',$data); 
-});
+}); */
 
 $app->get('/listUsers', function () use ($app) {
 	
@@ -129,8 +129,12 @@ $app->get('/hello/:name', function ($name) {
     echo "Hello, $name";
 });
 
-$app->get('/home', function () {
-    echo "Home";
+$app->get('/home', function () use ($app) {
+    $app->render('home.php');
+});
+
+$app->get('/formQuiz', function () use ($app) {
+    $app->render('formQuiz.php');
 });
 
 $app->get('/', function () use ($app){
