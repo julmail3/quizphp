@@ -1,0 +1,1 @@
+<html><head><title>InteliQuiz</title></head><body><h3>InteliQuiz</h3><a href="formQuiz">Criar um Quiz</a>&nbsp;|&nbsp;<a href="#">Teste</a>&nbsp;|&nbsp;<a href="#">Teste</a>&nbsp;&nbsp;</body></html>
