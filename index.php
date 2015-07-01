@@ -109,7 +109,6 @@ $app->post('/user', function () use ($app) {
     $email = (string)$input->email;
     $password = (string)$input->password;
 	addUser($username,$email,$password);
-    //$app->response()->header('Content-Type', 'application/json');
     $app->redirect("users");
   } catch (Exception $e) {
     $app->response()->status(400);
